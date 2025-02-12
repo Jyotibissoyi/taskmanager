@@ -81,5 +81,32 @@ const completeTask= async (req, res) => {
 };
 
 
+// Delete a task
+const deleteTask= async (req, res) => {
+    try {
+        const client = await pgConnect()
+        const { id } = req.params;
+        const deletedTask = await client.query("DELETE FROM tasks WHERE id = $1 RETURNING *", [id]);
+        if (deletedTask.rows.length === 0) return res.status(404).json({ error: "Task not found" });
+        res.json(deletedTask.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 
-module.exports = {createTask, fetchTask, updateTask, completeTask};
+// Search tasks
+const fetchByTitle =  async (req, res) => {
+    try {
+        const client = await pgConnect()
+        const { q } = req.query;
+        const tasks = await client.query(
+            "SELECT * FROM tasks WHERE title ILIKE $1 ",
+            [`%${q}%`]
+        );
+        res.json(tasks.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+module.exports = {createTask, fetchTask, updateTask, completeTask, deleteTask, fetchByTitle};
