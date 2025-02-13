@@ -109,7 +109,7 @@ const completeTask = async (req, res) => {
             "UPDATE tasks SET status = 'Completed', completed_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *",
             [id]
         );
-        if (oldTask.rows.length === 0) {
+        if (updatedTask.rows.length === 0) {
             return res.status(404).json({
                 status: false,
                 error: "Task not found"
