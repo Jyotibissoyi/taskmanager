@@ -118,7 +118,7 @@ const completeTask = async (req, res) => {
         return res.status(200).json({
             status: true,
             message: "Task marked as completed.",
-            data: updatedTask.rows[0]
+            task: updatedTask.rows[0]
         });
     } catch (err) {
         return res.status(500).json({ error: err.message });
@@ -161,7 +161,10 @@ const fetchByTitle = async (req, res) => {
             "SELECT * FROM tasks WHERE title ILIKE $1 ",
             [`%${q}%`]
         );
-        res.json(tasks.rows);
+       return res.status(200).json({
+        status : true,
+        message :"Fetch task successfully.",
+        tasks :tasks.rows});
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
